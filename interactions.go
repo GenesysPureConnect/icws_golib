@@ -2,7 +2,6 @@ package icws_golib
 
 import (
 	"encoding/json"
-
 )
 
 //Creates a new call
@@ -12,7 +11,7 @@ func (i *Icws) MakeCall(target string) (result ConfigRecord, err error) {
 		"__type": "urn:inin.com:interactions:createCallParameters",
 		"target": target,
 	}
-	body, err, _ := i.httpPost("/interactions", callData)
+	body, err := i.httpPost("/interactions", callData)
 
 	if err != nil {
 		return
@@ -54,7 +53,7 @@ func (i *Icws) InteractionAction(action, interactionId, attribute string) (resul
 			callData = nil
 		}
 
-		_, err, _ = i.httpPost("/interactions/"+interactionId+"/"+action, callData)
+		_, err = i.httpPost("/interactions/"+interactionId+"/"+action, callData)
 
 	}
 

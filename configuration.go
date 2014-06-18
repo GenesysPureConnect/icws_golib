@@ -1,14 +1,20 @@
 package icws_golib
 
 import (
-    "encoding/json"
-    "strings"
-
-
+	"encoding/json"
+	"strings"
 )
 
 type ConfigRecord map[string]interface{}
 
+func (i *Icws) Defaults(configurationType string) (defaults ConfigRecord, err error) {
+
+	body, err := i.httpGet("/configuration/defaults/" + configurationType)
+
+	err = json.Unmarshal(body, &defaults)
+	return
+
+}
 
 //Gets a record for the ID of a specific configuration type.
 func (i *Icws) GetConfigurationRecord(configurationType, id, properties string) (record ConfigRecord, err error) {
