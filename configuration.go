@@ -7,6 +7,7 @@ import (
 
 type ConfigRecord map[string]interface{}
 
+//gets the default values for a configuration type
 func (i *Icws) Defaults(configurationType string) (defaults ConfigRecord, err error) {
 
 	body, err := i.httpGet("/configuration/defaults/" + configurationType)
@@ -32,6 +33,19 @@ func (i *Icws) GetConfigurationRecord(configurationType, id, properties string) 
 	err = json.Unmarshal(body, &record)
 	return
 }
+
+//Deletes a record for the ID of a specific configuration type.
+func (i *Icws) DeleteConfigurationRecord(configurationType, id string) (err error) {
+
+    if !strings.HasSuffix(configurationType, "s") {
+        configurationType += "s"
+    }
+
+    err = i.httpDelete("/configuration/" + configurationType + "/" + id )
+
+    return
+}
+
 
 //Returns a list of matching records for the given object type.
 func (i *Icws) SelectConfigurationRecords(objectType, selectFields, where string) (records []ConfigRecord, err error) {

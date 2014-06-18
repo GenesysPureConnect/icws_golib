@@ -15,15 +15,35 @@ import (
 )
 
 type Icws struct {
-	CurrentToken, CurrentCookie, CurrentSession, CurrentServer string
+	CurrentToken, CurrentCookie, CurrentSession, CurrentServer, UserId string
+
 }
 
+//Version information for the server
 type ServerVersion struct{
-	MajorVersion,MinorVersion,Su, ProductId,CodeBaseId, Build, ProductReleaseDisplayString, ProductPatchDisplayString string
+	//The product's two-digit release year. For the release "CIC 2015 R1" this value will be "15"
+	MajorVersion string
+	//The product's release number. For the release "CIC 2015 R1" this value will be "1".
+	MinorVersion string
+	//The patch number of the release. The value "0" indicates the release without any patches. For the release "CIC 2015 R1" this value will be "0", and for the release "CIC 2015 R1 Patch2" this value will be "2".
+	Su string
+	//The product line identifier.
+	ProductId string
+	//The codebase identifier.
+	CodeBaseId string
+	//The build number.
+	Build string
+	//The display string for the release. This does not include patch information.
+	ProductReleaseDisplayString string
+	//The display string for the release including patch information. This string is recommended for use on application "About" screens.
+	ProductPatchDisplayString string
 }
 
+//Definition of a server feature
 type ServerFeature struct{
+	//Id of the features
 	FeatureId string
+	//version of the feature
 	Version int
 }
 
@@ -69,6 +89,7 @@ func (i *Icws) loginWithData(applicationName, server, username, password string,
 		i.CurrentSession = returnData["sessionId"]
 		i.CurrentServer = server
 		i.CurrentCookie = cookie
+		i.UserId = username
 
 	} else {
 		log.Printf("ERROR: %s\n", err.Error())
@@ -76,7 +97,7 @@ func (i *Icws) loginWithData(applicationName, server, username, password string,
 	return
 }
 
-//Logs into a CIC server.  Server should be a url e.g. https://MyServer:8019
+//Logs into a CIC server.  Server should be a server name e.g. MyServer.domain.com
 func (i *Icws) Login(applicationName, server, username, password string) (err error) {
 
 	var loginData = map[string]string{
@@ -112,6 +133,7 @@ func (i *Icws) GetVersion() (version ServerVersion, err error) {
 	return
 }
 
+//Gets a list of features and their version from the server
 func (i *Icws) GetFeatures() (features []ServerFeature, err error) {
 
 	body, err := i.httpNoConnectionGet("/connection/features")

@@ -15,7 +15,7 @@ type ConfigRecord map[string]interface{}
 
 
 type Icws struct {
-    CurrentToken, CurrentCookie, CurrentSession, CurrentServer string
+    CurrentToken, CurrentCookie, CurrentSession, CurrentServer, UserId string
 }
 
 
@@ -43,8 +43,8 @@ func (i *Icws) InteractionAction(action, interactionId, attribute string) (resul
     Disconnect, etc
 
 func (i *Icws) Login(applicationName, server, username, password string) (err error)
-    Logs into a CIC server. Server should be a url e.g.
-    https://MyServer:8019
+    Logs into a CIC server. Server should be a server name e.g.
+    MyServer.domain.com
 
 func (i *Icws) LoginMarketPlaceApp(applicationName, server, username, password, marketplaceLicense, markeplaceAppKey string) (err error)
     Logs into a CIC server for a MarketPlace application using the app's
