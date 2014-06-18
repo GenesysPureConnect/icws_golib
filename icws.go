@@ -55,7 +55,7 @@ func NewIcws() (icws *Icws) {
 
 func (i *Icws) loginWithData(applicationName, server, username, password string, loginData map[string]string) (err error) {
 
-	server = fmt.Sprintf("http://%s:8888", server)
+	server = fmt.Sprintf("http://%s:8018", server)
 
 	log.Printf("Logging into %s with user %s", server, username)
 
