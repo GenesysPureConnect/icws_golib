@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"crypto/tls"
 )
 
 type Icws struct {
@@ -55,7 +56,7 @@ func NewIcws() (icws *Icws) {
 
 func (i *Icws) loginWithData(applicationName, server, username, password string, loginData map[string]string) (err error) {
 
-	server = fmt.Sprintf("http://%s:8018", server)
+	server = fmt.Sprintf("https://%s:8019", server)
 
 	log.Printf("Logging into %s with user %s", server, username)
 
@@ -301,8 +302,10 @@ func (i *Icws) httpPut(url string, attrs map[string]string) (body []byte, err er
 }
 
 func (i *Icws) httpClient() (client *http.Client) {
-
-	client = &http.Client{}
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify : true},
+	}
+	client = &http.Client{Transport: tr}
 	return
 }
 
