@@ -10,8 +10,7 @@ var testuser = "kevin.glinski"
 var testpassword = "1234"
 
 func TestLogin(t *testing.T) {
-	log.Printf("LoginTest")
-
+	
 	icws := NewIcws()
 	err := icws.Login("unitTest", testserver, testuser, testpassword)
 
@@ -21,6 +20,17 @@ func TestLogin(t *testing.T) {
 
 }
 
+func TestHttpLogin(t *testing.T) {
+	icws := NewIcws()
+	icws.HttpScheme = "http"
+	icws.Port = 8018
+	err := icws.Login("unitTest", testserver, testuser, testpassword)
+
+	if err != nil {
+		t.Error(err)
+	}
+
+}
 
 func TestVersion(t *testing.T) {
     icws := NewIcws();

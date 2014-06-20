@@ -16,7 +16,8 @@ import (
 )
 
 type Icws struct {
-	CurrentToken, CurrentCookie, CurrentSession, CurrentServer, UserId string
+	CurrentToken, CurrentCookie, CurrentSession, CurrentServer, UserId,HttpScheme string
+	Port int
 
 }
 
@@ -51,12 +52,15 @@ type ServerFeature struct{
 //Creates a new ICWS struct
 func NewIcws() (icws *Icws) {
 	icws = &Icws{}
+	icws.HttpScheme = "https"
+	icws.Port = 8019
 	return
 }
 
+
 func (i *Icws) loginWithData(applicationName, server, username, password string, loginData map[string]string) (err error) {
 
-	server = fmt.Sprintf("https://%s:8019", server)
+	server = fmt.Sprintf("%s://%s:%d", i.HttpScheme, server, i.Port)
 
 	log.Printf("Logging into %s with user %s", server, username)
 
