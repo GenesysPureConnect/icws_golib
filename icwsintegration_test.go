@@ -1,7 +1,7 @@
 package icws_golib
 
 import (
-	"log"
+	"os"
 	"testing"
 )
 
@@ -10,7 +10,10 @@ var testuser = "kevin.glinski"
 var testpassword = "1234"
 
 func TestLogin(t *testing.T) {
-	
+	if os.Getenv("CI") != "" {
+		t.Skip("skipping test in short mode.")
+	}
+
 	icws := NewIcws()
 	err := icws.Login("unitTest", testserver, testuser, testpassword)
 
@@ -21,6 +24,10 @@ func TestLogin(t *testing.T) {
 }
 
 func TestHttpLogin(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("skipping test in short mode.")
+	}
+
 	icws := NewIcws()
 	icws.HttpScheme = "http"
 	icws.Port = 8018
@@ -33,46 +40,53 @@ func TestHttpLogin(t *testing.T) {
 }
 
 func TestVersion(t *testing.T) {
-    icws := NewIcws();
+	if os.Getenv("CI") != "" {
+		t.Skip("skipping test in short mode.")
+	}
 
-    err := icws.Login("unitTest", testserver, testuser, testpassword)
+	icws := NewIcws()
 
-    if err != nil {
-        t.Error(err)
-    }
+	err := icws.Login("unitTest", testserver, testuser, testpassword)
 
-    version, err := icws.GetVersion();
+	if err != nil {
+		t.Error(err)
+	}
 
-    if err != nil {
-        t.Error(err)
-    }
+	version, err := icws.GetVersion()
 
-    if(version.MajorVersion == ""){
-        t.Error("Error getting version")
-    }
+	if err != nil {
+		t.Error(err)
+	}
 
-    //log.Printf("%+v", version);
+	if version.MajorVersion == "" {
+		t.Error("Error getting version")
+	}
+
+	//log.Printf("%+v", version);
 }
 
-
 func TestFeatures(t *testing.T) {
-    icws := NewIcws();
+	if os.Getenv("CI") != "" {
+		t.Skip("skipping test in short mode.")
+	}
 
-    err := icws.Login("unitTest", testserver, testuser, testpassword)
+	icws := NewIcws()
 
-    if err != nil {
-        t.Error(err)
-    }
+	err := icws.Login("unitTest", testserver, testuser, testpassword)
 
-    features, err := icws.GetFeatures();
+	if err != nil {
+		t.Error(err)
+	}
 
-    if err != nil {
-        t.Error(err)
-    }
+	features, err := icws.GetFeatures()
 
-    if(features == nil || len(features) == 0){
-        t.Error("Error getting features")
-    }
+	if err != nil {
+		t.Error(err)
+	}
 
-    //log.Printf("%+v", features);
+	if features == nil || len(features) == 0 {
+		t.Error("Error getting features")
+	}
+
+	//log.Printf("%+v", features);
 }

@@ -37,15 +37,14 @@ func (i *Icws) GetConfigurationRecord(configurationType, id, properties string) 
 //Deletes a record for the ID of a specific configuration type.
 func (i *Icws) DeleteConfigurationRecord(configurationType, id string) (err error) {
 
-    if !strings.HasSuffix(configurationType, "s") {
-        configurationType += "s"
-    }
+	if !strings.HasSuffix(configurationType, "s") {
+		configurationType += "s"
+	}
 
-    err = i.httpDelete("/configuration/" + configurationType + "/" + id )
+	err = i.httpDelete("/configuration/" + configurationType + "/" + id)
 
-    return
+	return
 }
-
 
 //Returns a list of matching records for the given object type.
 func (i *Icws) SelectConfigurationRecords(objectType, selectFields, where string) (records []ConfigRecord, err error) {

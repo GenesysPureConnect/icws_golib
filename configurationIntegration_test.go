@@ -3,10 +3,13 @@ package icws_golib
 import (
 	"fmt"
 	"testing"
+	"os"
 )
 
 func TestGetConfigurationRecord(t *testing.T) {
-
+	if os.Getenv("CI") != "" {
+		t.Skip("skipping test in short mode.")
+	}
 	var icws = NewIcws()
 	icws.Login("Test", testserver, testuser, testpassword)
 	record, err := icws.GetConfigurationRecord("user", testuser, "extension")
@@ -22,6 +25,9 @@ func TestGetConfigurationRecord(t *testing.T) {
 }
 
 func TestGetConfigurationRecord_WithInvalidId(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("skipping test in short mode.")
+	}
 
 	var icws = NewIcws()
 	icws.Login("Test", testserver, testuser, testpassword)
@@ -38,6 +44,9 @@ func TestGetConfigurationRecord_WithInvalidId(t *testing.T) {
 }
 
 func TestSelectConfigurationRecords(t *testing.T) {
+	if os.Getenv("CI") != "" {
+		t.Skip("skipping test in short mode.")
+	}
 	var icws = NewIcws()
 	icws.Login("Test", testserver, testuser, testpassword)
 	records, err := icws.SelectConfigurationRecords("user", "extension", "")

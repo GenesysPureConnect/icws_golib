@@ -5,6 +5,7 @@ package icws_golib
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,17 +13,15 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"crypto/tls"
 )
 
 type Icws struct {
-	CurrentToken, CurrentCookie, CurrentSession, CurrentServer, UserId,HttpScheme string
-	Port int
-
+	CurrentToken, CurrentCookie, CurrentSession, CurrentServer, UserId, HttpScheme string
+	Port                                                                           int
 }
 
 //Version information for the server
-type ServerVersion struct{
+type ServerVersion struct {
 	//The product's two-digit release year. For the release "CIC 2015 R1" this value will be "15"
 	MajorVersion string
 	//The product's release number. For the release "CIC 2015 R1" this value will be "1".
@@ -42,7 +41,7 @@ type ServerVersion struct{
 }
 
 //Definition of a server feature
-type ServerFeature struct{
+type ServerFeature struct {
 	//Id of the features
 	FeatureId string
 	//version of the feature
@@ -56,7 +55,6 @@ func NewIcws() (icws *Icws) {
 	icws.Port = 8019
 	return
 }
-
 
 func (i *Icws) loginWithData(applicationName, server, username, password string, loginData map[string]string) (err error) {
 
@@ -307,7 +305,7 @@ func (i *Icws) httpPut(url string, attrs map[string]string) (body []byte, err er
 
 func (i *Icws) httpClient() (client *http.Client) {
 	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify : true},
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client = &http.Client{Transport: tr}
 	return
