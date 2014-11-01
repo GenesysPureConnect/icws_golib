@@ -60,7 +60,8 @@ func NewIcws() (icws *Icws) {
 
 func (i *Icws) loginWithData(applicationName, server, username, password string, loginData map[string]string) (err error) {
 
-	server = fmt.Sprintf("%s://%s:%d", i.HttpScheme, server, i.Port)
+	urlFormat := "%s://%s:%d"
+	server = fmt.Sprintf(urlFormat, i.HttpScheme, server, i.Port)
 
 	log.Printf("Logging into %s with user %s", server, username)
 
@@ -76,7 +77,7 @@ func (i *Icws) loginWithData(applicationName, server, username, password string,
 
 		nextServer := returnData["alternateHostList"].([]interface{})[0]
 
-		server = fmt.Sprintf("http://%s:8018", nextServer)
+		server = fmt.Sprintf(urlFormat, nextServer)
 
 		log.Printf("Redirected to server %s", server)
 
@@ -102,6 +103,80 @@ func (i *Icws) loginWithData(applicationName, server, username, password string,
 	return
 }
 
+//logs into CIC through a reverse proxy
+func (i *Icws) ProxyLoginWithData(applicationName, proxyUrl, serverName, username, password string, loginData map[string]string) (err error) {
+
+	urlFormat := "%s://%s/%s"
+	server := fmt.Sprintf(urlFormat, i.HttpScheme, proxyUrl, serverName)
+
+	log.Printf("Logging into %s with user %s", server, username)
+
+	i.CurrentSession = ""
+	i.CurrentServer = server
+	body, statusCode, err, cookie := i.httpPostAdvanced("connection", loginData)
+
+	nextServerIndex := 0
+	for statusCode == 503 {
+
+		var returnData map[string]interface{}
+		json.Unmarshal(body, &returnData)
+
+		nextServer := returnData["alternateHostList"].([]interface{})[0]
+
+		server = fmt.Sprintf(urlFormat, i.HttpScheme, proxyUrl, nextServer)
+
+		log.Printf("Redirected to server %s", server)
+
+		i.CurrentServer = server
+		body, statusCode, err, cookie = i.httpPostAdvanced("connection", loginData)
+
+		nextServerIndex++
+	}
+
+	if err == nil {
+
+		var returnData map[string]string
+		json.Unmarshal(body, &returnData)
+		i.CurrentToken = returnData["csrfToken"]
+		i.CurrentSession = returnData["sessionId"]
+		i.CurrentServer = server
+		i.CurrentCookie = cookie
+		i.UserId = username
+
+	} else {
+		log.Printf("ERROR: %s\n", err.Error())
+	}
+	return
+}
+
+//logs into a CIC server through a reverse proxy where the url to reach the server would be proxyUrl/serverName
+func (i *Icws) ProxyLogin(applicationName, proxyUrl, serverName, username, password string) (err error) {
+
+	var loginData = map[string]string{
+		"__type":          "urn:inin.com:connection:icAuthConnectionRequestSettings",
+		"applicationName": applicationName,
+		"userID":          username,
+		"password":        password,
+	}
+
+	return i.ProxyLoginWithData(applicationName, proxyUrl, serverName, username, password, loginData)
+}
+
+//Logs into a CIC server for a MarketPlace application using the app's custom license.  Server should be a url e.g. https://MyServer:8019
+func (i *Icws) ProxyLoginMarketPlaceApp(applicationName, proxyUrl, serverName, username, password, marketplaceLicense, marketplaceAppKey string) (err error) {
+
+	var loginData = map[string]string{
+		"__type":          "urn:inin.com:connection:icAuthConnectionRequestSettings",
+		"applicationName": applicationName,
+		"userID":          username,
+		"password":        password,
+		"marketPlaceApplicationLicenseName": marketplaceLicense,
+		"marketPlaceApplicationCode" : marketplaceAppKey,
+	}
+
+	return i.ProxyLoginWithData(applicationName, proxyUrl, serverName, username, password, loginData)
+}
+
 //Logs into a CIC server.  Server should be a server name e.g. MyServer.domain.com
 func (i *Icws) Login(applicationName, server, username, password string) (err error) {
 
@@ -116,13 +191,15 @@ func (i *Icws) Login(applicationName, server, username, password string) (err er
 }
 
 //Logs into a CIC server for a MarketPlace application using the app's custom license.  Server should be a url e.g. https://MyServer:8019
-func (i *Icws) LoginMarketPlaceApp(applicationName, server, username, password, marketplaceLicense, markeplaceAppKey string) (err error) {
+func (i *Icws) LoginMarketPlaceApp(applicationName, server, username, password, marketplaceLicense, marketplaceAppKey string) (err error) {
 
 	var loginData = map[string]string{
 		"__type":          "urn:inin.com:connection:icAuthConnectionRequestSettings",
 		"applicationName": applicationName,
 		"userID":          username,
 		"password":        password,
+		"marketPlaceApplicationLicenseName": marketplaceLicense,
+		"marketPlaceApplicationCode" : marketplaceAppKey,
 	}
 
 	return i.loginWithData(applicationName, server, username, password, loginData)
