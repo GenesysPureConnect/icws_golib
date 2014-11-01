@@ -105,7 +105,7 @@ func (i *Icws) loginWithData(applicationName, server, username, password string,
 func (i *Icws) ProxyLoginWithData(applicationName, proxyUrl, serverName, username, password string, loginData map[string]string) (err error) {
 
 	urlFormat := "%s/%s"
-	server := fmt.Sprintf(urlFormat, i.HttpScheme, proxyUrl, serverName)
+	server := fmt.Sprintf(urlFormat, proxyUrl, serverName)
 
 	log.Printf("Logging into %s with user %s", server, username)
 
@@ -121,7 +121,7 @@ func (i *Icws) ProxyLoginWithData(applicationName, proxyUrl, serverName, usernam
 
 		nextServer := returnData["alternateHostList"].([]interface{})[0]
 
-		server = fmt.Sprintf(urlFormat, i.HttpScheme, proxyUrl, nextServer)
+		server = fmt.Sprintf(urlFormat, proxyUrl, nextServer)
 
 		log.Printf("Redirected to server %s", server)
 
