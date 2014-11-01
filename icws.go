@@ -104,7 +104,7 @@ func (i *Icws) loginWithData(applicationName, server, username, password string,
 //logs into CIC through a reverse proxy
 func (i *Icws) ProxyLoginWithData(applicationName, proxyUrl, serverName, username, password string, loginData map[string]string) (err error) {
 
-	urlFormat := "%s://%s/%s"
+	urlFormat := "%s/%s"
 	server := fmt.Sprintf(urlFormat, i.HttpScheme, proxyUrl, serverName)
 
 	log.Printf("Logging into %s with user %s", server, username)
