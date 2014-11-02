@@ -125,7 +125,7 @@ func (i *Icws) ProxyLoginWithData(applicationName, proxyUrl, serverName, usernam
 		json.Unmarshal(body, &returnData)
 
 		if returnData["alternateHostList"] == nil {
-			err = errors.new("Unable to connect to server, unknown error")
+			err = errors.New("Unable to connect to server, unknown error")
 		}
 
 		nextServer := returnData["alternateHostList"].([]interface{})[0]
