@@ -113,11 +113,20 @@ func (i *Icws) ProxyLoginWithData(applicationName, proxyUrl, serverName, usernam
 	i.CurrentServer = server
 	body, statusCode, err, cookie := i.httpPostAdvanced("connection", loginData)
 
+	if err != nil {
+		log.Printf("ERROR: %s\n", err.Error())
+		return
+	}
+
 	nextServerIndex := 0
 	for statusCode == 503 {
 
 		var returnData map[string]interface{}
 		json.Unmarshal(body, &returnData)
+
+		if returnData["alternateHostList"] == nil {
+			err = errors.new("Unable to connect to server, unknown error")
+		}
 
 		nextServer := returnData["alternateHostList"].([]interface{})[0]
 
@@ -164,12 +173,12 @@ func (i *Icws) ProxyLogin(applicationName, proxyUrl, serverName, username, passw
 func (i *Icws) ProxyLoginMarketPlaceApp(applicationName, proxyUrl, serverName, username, password, marketplaceLicense, marketplaceAppKey string) (err error) {
 
 	var loginData = map[string]string{
-		"__type":          "urn:inin.com:connection:icAuthConnectionRequestSettings",
-		"applicationName": applicationName,
-		"userID":          username,
-		"password":        password,
+		"__type":                            "urn:inin.com:connection:icAuthConnectionRequestSettings",
+		"applicationName":                   applicationName,
+		"userID":                            username,
+		"password":                          password,
 		"marketPlaceApplicationLicenseName": marketplaceLicense,
-		"marketPlaceApplicationCode" : marketplaceAppKey,
+		"marketPlaceApplicationCode":        marketplaceAppKey,
 	}
 
 	return i.ProxyLoginWithData(applicationName, proxyUrl, serverName, username, password, loginData)
@@ -192,12 +201,12 @@ func (i *Icws) Login(applicationName, server, username, password string) (err er
 func (i *Icws) LoginMarketPlaceApp(applicationName, server, username, password, marketplaceLicense, marketplaceAppKey string) (err error) {
 
 	var loginData = map[string]string{
-		"__type":          "urn:inin.com:connection:icAuthConnectionRequestSettings",
-		"applicationName": applicationName,
-		"userID":          username,
-		"password":        password,
+		"__type":                            "urn:inin.com:connection:icAuthConnectionRequestSettings",
+		"applicationName":                   applicationName,
+		"userID":                            username,
+		"password":                          password,
 		"marketPlaceApplicationLicenseName": marketplaceLicense,
-		"marketPlaceApplicationCode" : marketplaceAppKey,
+		"marketPlaceApplicationCode":        marketplaceAppKey,
 	}
 
 	return i.loginWithData(applicationName, server, username, password, loginData)
