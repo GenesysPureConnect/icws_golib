@@ -113,11 +113,6 @@ func (i *Icws) ProxyLoginWithData(applicationName, proxyUrl, serverName, usernam
 	i.CurrentServer = server
 	body, statusCode, err, cookie := i.httpPostAdvanced("connection", loginData)
 
-	if err != nil {
-		log.Printf("ERROR: %s\n", err.Error())
-		return
-	}
-
 	nextServerIndex := 0
 	for statusCode == 503 {
 
