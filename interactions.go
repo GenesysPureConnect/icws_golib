@@ -11,7 +11,7 @@ func (i *Icws) MakeCall(target string) (result ConfigRecord, err error) {
 		"__type": "urn:inin.com:interactions:createCallParameters",
 		"target": target,
 	}
-	body, err := i.httpPost("/interactions", callData)
+	body, err := i.HttpPost("/interactions", callData)
 
 	if err != nil {
 		return
@@ -53,7 +53,7 @@ func (i *Icws) InteractionAction(action, interactionId, attribute string) (resul
 			callData = nil
 		}
 
-		_, err = i.httpPost("/interactions/"+interactionId+"/"+action, callData)
+		_, err = i.HttpPost("/interactions/"+interactionId+"/"+action, callData)
 
 	}
 
