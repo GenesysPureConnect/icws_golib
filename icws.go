@@ -315,7 +315,7 @@ func (i *Icws) httpNoConnectionGet(url string) (body []byte, err error) {
 	return
 }
 
-func (i *Icws) HttpPost(url string, attrs map[string]string) (body []byte, err error) {
+func (i *Icws) httpPost(url string, attrs map[string]string) (body []byte, err error) {
 	body, _, err, _ = i.httpPostAdvanced(url, attrs)
 	return
 }
