@@ -2,8 +2,8 @@ package icws_golib
 
 import (
 	"fmt"
-	"testing"
 	"os"
+	"testing"
 )
 
 func TestGetConfigurationRecord(t *testing.T) {
